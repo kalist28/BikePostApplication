@@ -15,7 +15,7 @@ import androidx.core.app.ActivityCompat;
  */
 public final class PermissionChecker {
     /** Working context. */
-    private Context context;
+    private final Context context;
 
     /**
      * Get new instance.

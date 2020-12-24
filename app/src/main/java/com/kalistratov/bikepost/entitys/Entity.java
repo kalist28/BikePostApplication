@@ -12,6 +12,12 @@ public class Entity<C> {
     @SerializedName("attributes")
     private C property;
 
+    /**
+     * Constructor with no args.
+     */
+    public Entity() {
+    }
+
     public int getId() {
         return id;
     }
@@ -22,6 +28,15 @@ public class Entity<C> {
 
     public C getProperty() {
         return property;
+    }
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", property=" + property +
+                '}';
     }
 }
 

@@ -33,12 +33,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.kalistratov.bikepost.api.Action;
 import com.kalistratov.bikepost.api.Server;
+import com.kalistratov.bikepost.api.inquiry.PostsListInquiry;
 import com.kalistratov.bikepost.entitys.BikePost;
 import com.kalistratov.bikepost.entitys.Entity;
+import com.kalistratov.bikepost.entitys.EntityList;
+import com.kalistratov.bikepost.map.PostsActivity;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MapsActivity
         extends FragmentActivity
@@ -64,21 +72,28 @@ public class MapsActivity
 
         locationList = new LinkedList<>();
 
-        Server.get().getResponse(response -> {
-            Marker m = null;
-            for (Entity<BikePost> p : response.body().data) {
-                BikePost post = p.getProperty();
-                m = mMap.addMarker(new MarkerOptions()
-                        .position(post.getCoordinates())
-                        .title(post.name)
-                        .icon(bitmapDescriptorFromVector(
-                                MapsActivity.this,
-                                R.drawable.ic_point
-                                )
-                        )
-                );
+        Server.get().getResponse(new Action<EntityList<BikePost>>() {
+            @Override
+            public void action(final Response<EntityList<BikePost>> response) {
+                Marker marker = null;
+                BitmapDescriptor bitmap;
+                System.out.println("****************************************************" + response.body().data);
+
+                for (Entity<BikePost> p : response.body().data) {
+                    BikePost post = p.getProperty();
+                    marker = mMap.addMarker(new MarkerOptions()
+                            .position(post.getCoordinates())
+                            .title(post.name)
+                    );
+                }
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
             }
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(m.getPosition()));
+
+            @Override
+            public Call<EntityList<BikePost>> getCall(Retrofit retrofit) {
+                return retrofit.create(PostsListInquiry.class).getPosts();
+            }
         });
 
         if (checkPermission()) {
@@ -177,21 +192,7 @@ public class MapsActivity
         if (!checkPermission()) mMap.setMyLocationEnabled(true);
     }
 
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
-        Drawable drawable = ContextCompat.getDrawable(context, vectorResId);
-        drawable.setBounds(
-                0,
-                0,
-                drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(
-                drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
+
 
     @Override
     public void onInfoWindowClick(Marker marker) {

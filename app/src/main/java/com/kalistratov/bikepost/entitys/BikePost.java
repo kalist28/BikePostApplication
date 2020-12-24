@@ -10,6 +10,9 @@ public class BikePost extends Entity<BikePost> {
     @SerializedName("coordinates")
     public String coordinates;
 
+    public BikePost() {
+    }
+
     public double getLat() {
         return Double.parseDouble(coordinates.substring(0, coordinates.indexOf(',')));
     }
@@ -24,7 +27,7 @@ public class BikePost extends Entity<BikePost> {
 
     @Override
     public String toString() {
-        return "BikePost{" +
+        return "BikePost {" +
                 "name='" + name + '\'' +
                 ", coordinates='" + getLat() + ":" + getLng() + '\'' +
                 '}';

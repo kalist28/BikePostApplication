@@ -1,6 +1,7 @@
 package com.kalistratov.bikepost.api;
 
-import com.kalistratov.bikepost.entitys.BikePost;
+import android.util.Log;
+
 import com.kalistratov.bikepost.entitys.EntityList;
 
 import java.io.IOException;
@@ -48,6 +49,29 @@ public class Server {
                 .build();
     }
 
+    public <E> void getResponse(Action<EntityList<E>> action) {
+        action.getCall(retrofit).enqueue(new Callback<EntityList<E>>() {
+            @Override
+            public void onResponse(Call<EntityList<E>> call, Response<EntityList<E>> response) {
+                if (response.isSuccessful()) {
+                    // запрос выполнился успешно, сервер вернул Status 200
+                    action.action(response);
+                    Log.e(this.getClass().getName(), "Server apply : " + response.message());
+                } else {
+                    // сервер вернул ошибку
+                    Log.e(this.getClass().getName(), "Server error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EntityList<E>> call, Throwable t) {
+                // ошибка во время выполнения запроса
+                Log.e(this.getClass().getName(), "Server error: " + t.getMessage());
+            }
+        });
+    }
+
+    /*
     public void getResponse (Action<EntityList<BikePost>> action) {
         ServerInquiries service = retrofit.create(ServerInquiries.class);
         Call<EntityList<BikePost>> call = service.getPosts();
@@ -56,17 +80,21 @@ public class Server {
             public void onResponse(Call<EntityList<BikePost>> call, Response<EntityList<BikePost>> response) {
                 if (response.isSuccessful()) {
                     // запрос выполнился успешно, сервер вернул Status 200
-                   action.action(response);
+                    action.action(response);
+                    Log.e(this.getClass().getName(), "Server apply : " + response.message());
                 } else {
                     // сервер вернул ошибку
-
+                    Log.e(this.getClass().getName(), "Server error: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<EntityList<BikePost>> call, Throwable t) {
                 // ошибка во время выполнения запроса
+                Log.e(this.getClass().getName(), "Server error: " + t.getMessage();
             }
         });
     }
+
+     */
 }

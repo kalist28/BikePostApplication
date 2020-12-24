@@ -27,9 +27,7 @@ public class SecondFragment extends Fragment {
         view.findViewById(R.id.button_second).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //NavHostFragment.findNavController(SecondFragment.this)
-                //        .navigate(R.id.action_SecondFragment_to_FirstFragment);
-                startActivity(new Intent(getContext(), MapsActivity.class));
+
             }
         });
     }

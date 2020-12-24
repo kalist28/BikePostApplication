@@ -15,7 +15,7 @@
         android:theme="@style/Theme.BikePost"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".BikePostActivity"></activity>
+        <activity android:name=".BikePostActivity" />
         <!-- android:networkSecurityConfig="@xml/network_security_config" -->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -32,6 +32,10 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
+
+        <activity
+                android:name=".map.PostsActivity"
+                android:label="@string/title_activity_posts" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

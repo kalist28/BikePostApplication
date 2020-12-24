@@ -10,7 +10,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.kalistratov.bikepost.R;
 import com.kalistratov.bikepost.tools.PermissionChecker;
 
 /**
@@ -24,7 +26,7 @@ public abstract class AMapActivity
         implements OnMapReadyCallback {
 
     /** The main class of the card. */
-    private GoogleMap map;
+    protected GoogleMap map;
 
     /**
      * The main entry point for interacting with the fused location provider.
@@ -40,11 +42,19 @@ public abstract class AMapActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(viewLayout());
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.map = googleMap;
+
         setDefaultUiSetting();
         setMyLocationEnabled(true);
     }
@@ -84,4 +94,9 @@ public abstract class AMapActivity
     protected UiSettings getUiSetting() {
         return map.getUiSettings();
     }
+
+    /**
+     * @return view for activity.
+     */
+    abstract int viewLayout();
 }
