@@ -67,7 +67,7 @@ public class PostsActivity extends AMapActivity {
     }
 
     @Override
-    int viewLayout() {
+    public int viewLayout() {
         return R.layout.activity_map_posts;
     }
 

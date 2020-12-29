@@ -13,7 +13,6 @@ import retrofit2.http.GET;
  * @version 1.0
  */
 public interface PostsListInquiry {
-
     @GET("api/index.php/v1/bike_posts")
     Call<EntityList<BikePost>> getPosts();
 }

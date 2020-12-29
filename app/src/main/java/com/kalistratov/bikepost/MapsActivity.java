@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
@@ -128,10 +129,10 @@ public class MapsActivity
                     fusedLocationClient.requestLocationUpdates(
                             locationRequest,
                             callback,
-                            Looper.getMainLooper()
+                            Looper.myLooper()
                     );
                 } else {
-                    fusedLocationClient.removeLocationUpdates(callback);
+                    //fusedLocationClient.removeLocationUpdates(callback);
                     PolylineOptions polyline = new PolylineOptions();
                     for (LatLng l : locationList) {
                         polyline.add(l);
@@ -163,8 +164,8 @@ public class MapsActivity
     }
 
     private boolean checkPermission(){
-        return ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+               ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -176,7 +177,12 @@ public class MapsActivity
                 for (int r : grantResults){
                     check = check && r == PackageManager.PERMISSION_GRANTED;
                 }
-                if (!checkPermission()) mMap.setMyLocationEnabled(true);
+                if (!checkPermission()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                    }
+                    mMap.setMyLocationEnabled(true);
+                }
             }
         }
     }

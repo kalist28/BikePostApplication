@@ -33,9 +33,9 @@ public class Entity<C> {
     @Override
     public String toString() {
         return "Entity{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", property=" + property +
+                "id="       + id + ","+
+                "type="     + type + ","+
+                "property=" + property + ","+
                 '}';
     }
 }

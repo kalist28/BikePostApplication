@@ -15,10 +15,33 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Class server.
+ *
+ * Establishes a connection to the server.
+ * Allows making post and get requests.
+ *
+ * @author Dmitry Kalistratov <dmitry@kalistratov.ru>
+ * @version 1.0
+ */
 public class Server {
 
+    /** Logging tag. */
+    private final String TAG = getClass().getSimpleName();
+
+    /**
+     * Single instance.
+     */
     private static Server init;
+
+    /**
+     * Library helper for requests
+     */
     private final Retrofit retrofit;
+
+    /**
+     * Get instance.
+     */
     public static Server get() {
         if (init == null) {
             return init = new Server();
@@ -26,20 +49,21 @@ public class Server {
         return init;
     }
 
-     private Server() {
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request originalRequest = chain.request();
+    /**
+     * Private constructor.
+     * Create connection from server.
+     */
+    private Server() {
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(chain -> {
+            Request originalRequest = chain.request();
 
-                Request.Builder builder = originalRequest.newBuilder()
-                        .addHeader("Authorization", "Bearer c2hhMjU2OjY3NTpjZDkwOWVmNWQwNTExOTY2NWUzZGQ5NmIyYTk0YjI3NDM0NGY3OGYwNmJlZjM3MTg5Y2MzZGU5MGJkMTJhNTNl")
-                        .addHeader("Content-Type", "application/vnd.api+json; charset=utf-8")
-                        .addHeader("User-Agent", "request")
-                        .addHeader("Accept", "*/*");
-                Request newRequest = builder.build();
-                return chain.proceed(newRequest);
-            }
+            Request.Builder builder = originalRequest.newBuilder()
+                    .addHeader("Authorization", "Bearer c2hhMjU2OjY3NTpjZDkwOWVmNWQwNTExOTY2NWUzZGQ5NmIyYTk0YjI3NDM0NGY3OGYwNmJlZjM3MTg5Y2MzZGU5MGJkMTJhNTNl")
+                    .addHeader("Content-Type", "application/vnd.api+json; charset=utf-8")
+                    .addHeader("User-Agent", "request")
+                    .addHeader("Accept", "*/*");
+            Request newRequest = builder.build();
+            return chain.proceed(newRequest);
         }).build();
 
         retrofit = new Retrofit.Builder()
@@ -49,6 +73,7 @@ public class Server {
                 .build();
     }
 
+    /** Create a get request to the server. */
     public <E> void getResponse(Action<EntityList<E>> action) {
         action.getCall(retrofit).enqueue(new Callback<EntityList<E>>() {
             @Override
@@ -56,45 +81,18 @@ public class Server {
                 if (response.isSuccessful()) {
                     // запрос выполнился успешно, сервер вернул Status 200
                     action.action(response);
-                    Log.e(this.getClass().getName(), "Server apply : " + response.message());
+                    Log.e(TAG, "Server apply : " + response.message());
                 } else {
                     // сервер вернул ошибку
-                    Log.e(this.getClass().getName(), "Server error: " + response.message());
+                    Log.e(TAG, "Server error: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<EntityList<E>> call, Throwable t) {
                 // ошибка во время выполнения запроса
-                Log.e(this.getClass().getName(), "Server error: " + t.getMessage());
+                Log.e(TAG, "Server error: " + t.getMessage());
             }
         });
     }
-
-    /*
-    public void getResponse (Action<EntityList<BikePost>> action) {
-        ServerInquiries service = retrofit.create(ServerInquiries.class);
-        Call<EntityList<BikePost>> call = service.getPosts();
-        call.enqueue(new Callback<EntityList<BikePost>>() {
-            @Override
-            public void onResponse(Call<EntityList<BikePost>> call, Response<EntityList<BikePost>> response) {
-                if (response.isSuccessful()) {
-                    // запрос выполнился успешно, сервер вернул Status 200
-                    action.action(response);
-                    Log.e(this.getClass().getName(), "Server apply : " + response.message());
-                } else {
-                    // сервер вернул ошибку
-                    Log.e(this.getClass().getName(), "Server error: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<EntityList<BikePost>> call, Throwable t) {
-                // ошибка во время выполнения запроса
-                Log.e(this.getClass().getName(), "Server error: " + t.getMessage();
-            }
-        });
-    }
-
-     */
 }

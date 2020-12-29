@@ -1,7 +1,11 @@
 package com.kalistratov.bikepost;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +13,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.kalistratov.bikepost.map.PostsActivity;
+import com.kalistratov.bikepost.map.TestRequestMapActivity;
+import com.kalistratov.bikepost.map.LibLocUpdateActivity;
 
 public class FirstFragment extends Fragment {
 
@@ -27,9 +32,8 @@ public class FirstFragment extends Fragment {
         view.findViewById(R.id.button_first).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               //NavHostFragment.findNavController(FirstFragment.this)
-               //        .navigate(R.id.action_FirstFragment_to_SecondFragment);
-                startActivity(new Intent(getContext(), PostsActivity.class));
+
+                startActivity(new Intent(getContext(), LibLocUpdateActivity.class));
 
             }
         });
@@ -39,7 +43,16 @@ public class FirstFragment extends Fragment {
             public void onClick(View view) {
                 //NavHostFragment.findNavController(FirstFragment.this)
                 //        .navigate(R.id.action_FirstFragment_to_SecondFragment);
-                startActivity(new Intent(getContext(), MapsActivity.class));
+                Intent intent = new Intent(getContext(), TestRequestMapActivity.class);
+                String packageName = getContext().getPackageName();
+                PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+                if (pm.isIgnoringBatteryOptimizations(packageName))
+                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                else {
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                }
+                startActivity(intent);
 
             }
         });

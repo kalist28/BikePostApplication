@@ -31,13 +31,13 @@ public abstract class AMapActivity
     /**
      * The main entry point for interacting with the fused location provider.
      */
-    private FusedLocationProviderClient fusedLocationClient;
+    protected FusedLocationProviderClient fusedLocationClient;
 
     /**
      * A data object that contains quality of service parameters for requests.
      * Additional settings for getting the coordinates of the location.
      */
-    private LocationRequest locationRequest;
+    protected LocationRequest locationRequest;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public abstract class AMapActivity
      * Checking the permissions for displaying personal tags on the map.
      * @return user permission.
      */
-    private boolean checkMyLocationPermission(){
+    protected boolean checkMyLocationPermission(){
         PermissionChecker checker = PermissionChecker.get(this);
         boolean fineLoc = checker
                 .permGranted(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -98,5 +98,5 @@ public abstract class AMapActivity
     /**
      * @return view for activity.
      */
-    abstract int viewLayout();
+    public abstract int viewLayout();
 }

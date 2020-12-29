@@ -4,7 +4,11 @@
     package="com.kalistratov.bikepost">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -16,15 +20,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
         <activity android:name=".BikePostActivity" />
-        <!-- android:networkSecurityConfig="@xml/network_security_config" -->
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -33,6 +29,13 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 
+        <activity android:name=".map.LibLocUpdateActivity"/>
+
+        <service android:name=".map.gps.tracker.GPSTrackerService"/>
+
+
+        <activity android:name=".map.TestRequestMapActivity"
+            android:label="@string/app_name"/>
         <activity
                 android:name=".map.PostsActivity"
                 android:label="@string/title_activity_posts" />
