@@ -29,7 +29,7 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 
-        <activity android:name=".map.LibLocUpdateActivity"/>
+        <activity android:name=".map.gps.tracker.GPSTrackerActivity"/>
 
         <service android:name=".map.gps.tracker.GPSTrackerService"/>
 

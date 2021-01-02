@@ -2,22 +2,13 @@ package com.kalistratov.bikepost.map.gps.tracker;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -25,9 +16,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.kalistratov.bikepost.MainActivity;
-import com.kalistratov.bikepost.R;
-import com.kalistratov.bikepost.map.LatLngBaseBeta;
 import com.kalistratov.bikepost.tools.PermissionChecker;
 
 
@@ -60,7 +48,7 @@ public class GPSTrackerService extends Service {
      * Unkillable notification.
      * Notifies the user to read his location in real time.
      */
-    private NotificationCompat.Builder notificationBuilder;
+    private TrackerNotification notification;
 
     /**
      * This method sets the rate in milliseconds
@@ -80,10 +68,10 @@ public class GPSTrackerService extends Service {
         super.onCreate();
         Log.e(TAG, "GPS Tracker onCreate :: ");
 
-        createNotification();
+        notification = new TrackerNotification(this);
         createLocationProvider();
 
-        startForeground(101, notificationBuilder.build());
+        startForeground(101, notification.build());
     }
 
     @Override
@@ -116,11 +104,13 @@ public class GPSTrackerService extends Service {
 
     /** location update action. */
     private void locationUpdateAction (final Location location) {
-        LatLngBaseBeta.get().getList().add(new LatLng(location.getLatitude(), location.getLongitude()));
-        Log.e(TAG, "location size " + LatLngBaseBeta.get().getList().size());
+        TrackerPointsBase.get().addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
+        Log.e(TAG, "location size " + TrackerPointsBase.get().getList().size());
         Log.e(TAG, "location Latitude " + location.getLatitude());
         //Log.e(TAG, "location Longitude " + location.getLongitude());
         //Log.e(TAG, "Speed :: " + location.getSpeed() * 3.6);
+        notification.setContentText("Speed : " + location.getSpeed() * 3.6 + "\nДлинна маршрута : " + TrackerPointsBase.get().getPolylineOptions().getWidth());
+        notification.build();
     }
 
     /**
@@ -152,37 +142,4 @@ public class GPSTrackerService extends Service {
              client.requestLocationUpdates(request, locationCallback, null);
         }
     }
-
-    /** Create and configure an unkillable notification. */
-    private void createNotification() {
-        Intent intent = new Intent( this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
-
-        String CHANNEL_ID = "GPS_Tracker";
-        String CHANNEL_NAME = "GPS_Tracker";
-
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            notificationManager.createNotificationChannel(channel);
-            notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
-            notificationBuilder.setColorized(false);
-            notificationBuilder.setChannelId(CHANNEL_ID);
-            //builder.setColor(ContextCompat.getColor(this, R.color.design_default_color_primary));
-            notificationBuilder.setBadgeIconType(NotificationCompat.BADGE_ICON_NONE);
-        } else {
-            notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
-        }
-        notificationBuilder.setOnlyAlertOnce(true);
-        notificationBuilder.setContentTitle(this.getResources().getString(R.string.app_name));
-        notificationBuilder.setContentText("Ваш маршрут записывается");
-        Uri notificationSound = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION);
-        notificationBuilder.setSound(notificationSound);
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
-        notificationBuilder.setContentIntent(pendingIntent);
-    }
-
 }
