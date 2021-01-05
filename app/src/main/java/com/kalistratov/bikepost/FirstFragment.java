@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.kalistratov.bikepost.map.TestRequestMapActivity;
-import com.kalistratov.bikepost.map.gps.tracker.GPSTrackerActivity;
+import com.kalistratov.bikepost.map.gps.TrackerActivity;
 
 public class FirstFragment extends Fragment {
 
@@ -33,7 +33,7 @@ public class FirstFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getContext(), GPSTrackerActivity.class));
+                startActivity(new Intent(getContext(), TrackerActivity.class));
 
             }
         });

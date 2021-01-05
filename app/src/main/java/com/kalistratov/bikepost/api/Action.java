@@ -11,7 +11,7 @@ import retrofit2.Retrofit;
  */
 public interface Action<T> {
     /**
-     * Действие при удачном подключении к серверу.
+     * Action on successful connection to the server.
      * @param response - query result object.
      */
     void action(final Response<T> response);

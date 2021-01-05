@@ -39,13 +39,18 @@ public abstract class AMapActivity
      */
     protected LocationRequest locationRequest;
 
+    /**
+     * Card readiness for work.
+     */
+    protected boolean mapIsReady;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(viewLayout());
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
@@ -53,7 +58,8 @@ public abstract class AMapActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        this.map = googleMap;
+        this.map        = googleMap;
+        this.mapIsReady = true;
 
         setDefaultUiSetting();
         setMyLocationEnabled(true);

@@ -1,8 +1,10 @@
-package com.kalistratov.bikepost.map.gps.tracker;
+package com.kalistratov.bikepost.map.gps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
@@ -16,7 +18,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 import com.kalistratov.bikepost.tools.PermissionChecker;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import static com.kalistratov.bikepost.map.gps.TrackerNotification.TAG_ACTION;
 
 
 /**
@@ -28,7 +36,7 @@ import com.kalistratov.bikepost.tools.PermissionChecker;
  * @author Dmitry Kalistratov <dmitry@kalistratov.ru>
  * @version 1.0
  */
-public class GPSTrackerService extends Service {
+public class TrackerService extends Service {
 
     /** Logging tag. */
     private final String TAG = getClass().getSimpleName();
@@ -51,6 +59,11 @@ public class GPSTrackerService extends Service {
     private TrackerNotification notification;
 
     /**
+     * System notification manager.
+     */
+    private NotificationManager notificationManagerCompat;
+
+    /**
      * This method sets the rate in milliseconds
      * at which app prefers to receive location updates.
      */
@@ -62,7 +75,6 @@ public class GPSTrackerService extends Service {
      */
     private static final int FASTEST_INTERVAL_M_SEC = 700;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -71,6 +83,7 @@ public class GPSTrackerService extends Service {
         notification = new TrackerNotification(this);
         createLocationProvider();
 
+        notificationManagerCompat = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         startForeground(101, notification.build());
     }
 
@@ -84,6 +97,15 @@ public class GPSTrackerService extends Service {
     public int onStartCommand(final Intent intent,
                               final int flags,
                               final int startId) {
+        Log.e(TAG, "onStartCommand: " + intent );
+        try {
+            if (intent.getStringExtra("action").equals(TAG_ACTION)) {
+                Log.e(TAG, "onStartCommand: stop service");
+                stopSelf();
+            }
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Location " + e);
+        }
         return START_NOT_STICKY;
     }
 
@@ -94,6 +116,7 @@ public class GPSTrackerService extends Service {
             client.removeLocationUpdates(locationCallback);
             Log.e(TAG, "Location Update Callback Removed");
         }
+        Log.e(TAG, "onDestroy: ");
     }
 
     @Nullable
@@ -104,13 +127,21 @@ public class GPSTrackerService extends Service {
 
     /** location update action. */
     private void locationUpdateAction (final Location location) {
-        TrackerPointsBase.get().addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
         Log.e(TAG, "location size " + TrackerPointsBase.get().getList().size());
         Log.e(TAG, "location Latitude " + location.getLatitude());
         //Log.e(TAG, "location Longitude " + location.getLongitude());
-        //Log.e(TAG, "Speed :: " + location.getSpeed() * 3.6);
-        notification.setContentText("Speed : " + location.getSpeed() * 3.6 + "\nДлинна маршрута : " + TrackerPointsBase.get().getPolylineOptions().getWidth());
-        notification.build();
+        Log.e(TAG, "Speed :: " + location.getSpeed() * 3.6);
+
+        final double speed = location.getSpeed() * 3.6;
+        if (speed >= 0.6) {
+            TrackerPointsBase.get().addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
+            TrackerPointsBase.get().update();
+        }
+        double distance = SphericalUtil.computeLength(TrackerPointsBase.get().getList());
+        notification.setContentText("Speed : " + speed + "\nДлинна маршрута : " + distance);
+
+        notificationManagerCompat.notify(101, notification.build());
+
     }
 
     /**

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.kalistratov.bikepost.map.gps.tracker.GPSTrackerActivity;
+import com.kalistratov.bikepost.map.gps.TrackerActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
 
-                startActivity(new Intent(MainActivity.this,  GPSTrackerActivity.class));
+                startActivity(new Intent(MainActivity.this,  TrackerActivity.class));
             }
         });
     }

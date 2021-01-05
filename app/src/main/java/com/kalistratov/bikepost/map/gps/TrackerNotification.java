@@ -1,4 +1,4 @@
-package com.kalistratov.bikepost.map.gps.tracker;
+package com.kalistratov.bikepost.map.gps;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,6 +24,12 @@ import com.kalistratov.bikepost.R;
  */
 public class TrackerNotification extends NotificationCompat.Builder {
 
+    /** Logging tag. */
+    private final String TAG = getClass().getSimpleName();
+
+    /** Stop tracker service action. */
+    public static final String TAG_ACTION = "tracker.stop_service";
+
     public static final String CHANNEL_ID = "GPS_Tracker";
     public static final String CHANNEL_NAME = "GPS Tracker";
 
@@ -48,12 +54,18 @@ public class TrackerNotification extends NotificationCompat.Builder {
 
         setOnlyAlertOnce(true);
         setContentTitle(context.getResources().getString(R.string.app_name));
-        //setContentText("Ваш маршрут записывается");
         Uri notificationSound = RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION);
         setSound(notificationSound);
         setAutoCancel(true);
         setSmallIcon(R.mipmap.ic_launcher);
         setStyle(new NotificationCompat.BigTextStyle());
         setContentIntent(pendingIntent);
+
+        Intent deleteIntent = new Intent(context, TrackerService.class);
+        deleteIntent.setAction(TAG);
+        deleteIntent.putExtra("action", TAG_ACTION);
+        PendingIntent deletePendingIntent = PendingIntent.getService(context, 0, deleteIntent, 0);
+
+        addAction(android.R.drawable.ic_delete, "Stop", deletePendingIntent);
     }
 }

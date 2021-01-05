@@ -1,6 +1,4 @@
-package com.kalistratov.bikepost.map.gps.tracker;
-
-import android.util.Log;
+package com.kalistratov.bikepost.map.gps;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -15,9 +13,12 @@ import java.util.List;
  */
 public class TrackerPointsBase {
 
+    public interface OnUpdateListener {
+        void onUpdate();
+    }
+
     private TrackerPointsBase() {
         polylineOptions = new PolylineOptions();
-        Log.e("TFDFGFDGD", "created");
     }
 
     private static TrackerPointsBase inst;
@@ -27,7 +28,12 @@ public class TrackerPointsBase {
         return inst;
     }
 
-    private PolylineOptions polylineOptions;
+    private final PolylineOptions polylineOptions;
+    private OnUpdateListener onUpdateListener;
+
+    public void setOnUpdateListener(final OnUpdateListener onUpdateListener) {
+        this.onUpdateListener = onUpdateListener;
+    }
 
     public List<LatLng> getList() {
         return polylineOptions.getPoints();
@@ -40,4 +46,10 @@ public class TrackerPointsBase {
     protected PolylineOptions getPolylineOptions() {
         return polylineOptions;
     }
+
+    public void update() {
+        if (onUpdateListener == null) return;
+        onUpdateListener.onUpdate();
+    }
+
 }
