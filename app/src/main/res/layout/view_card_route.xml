@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/routeCard"
+        android:layout_margin="10dp"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="10dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+        <TextView
+                android:id="@+id/routeTopic"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Маршрут 2"
+                android:autoSizeMaxTextSize="50dp"
+                android:autoSizeTextType="uniform"/>
+        <TextView
+                android:id="@+id/routeDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Время"
+                android:textSize="18sp"/>
+        <TextView
+                android:id="@+id/routeLength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Растояние"
+                android:textSize="18sp"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

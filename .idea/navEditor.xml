@@ -29,7 +29,7 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="SecondFragment">
+                  <entry key="PermissionCheckerFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
@@ -40,7 +40,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_SecondFragment_to_FirstFragment">
+                            <entry key="action_PermissionCheckerFragment_to_FirstFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

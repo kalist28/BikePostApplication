@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center|bottom">
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp">
+            <TextView
+                    android:id="@+id/trackInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Скорость: 123 км/ч\nПуть: 123 км."
+                    android:gravity="center_vertical"
+                    android:layout_gravity="left"
+                    android:textSize="17dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/stopBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:text="СТОП"
+                    android:layout_gravity="right|center"/>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

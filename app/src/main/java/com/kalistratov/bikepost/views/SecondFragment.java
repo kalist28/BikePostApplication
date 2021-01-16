@@ -1,4 +1,4 @@
-package com.kalistratov.bikepost;
+package com.kalistratov.bikepost.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.kalistratov.bikepost.R;
 
 public class SecondFragment extends Fragment {
 

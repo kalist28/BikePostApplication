@@ -1,9 +1,11 @@
-package com.kalistratov.bikepost;
+package com.kalistratov.bikepost.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.kalistratov.bikepost.R;
 
 public class BikePostActivity extends AppCompatActivity {
 

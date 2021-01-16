@@ -13,7 +13,7 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.kalistratov.bikepost.MainActivity;
+import com.kalistratov.bikepost.views.MainActivity;
 import com.kalistratov.bikepost.R;
 
 /**
@@ -38,6 +38,7 @@ public class TrackerNotification extends NotificationCompat.Builder {
 
         Intent intent = new Intent( context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("action", "openTracker");
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
 

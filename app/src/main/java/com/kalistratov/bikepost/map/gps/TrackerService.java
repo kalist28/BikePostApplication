@@ -19,10 +19,13 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
-import com.kalistratov.bikepost.tools.PermissionChecker;
+import com.kalistratov.bikepost.route.Route;
+import com.kalistratov.bikepost.tools.permissions.PermissionChecker;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.LinkedList;
+import java.util.Locale;
+
+import io.realm.Realm;
 
 import static com.kalistratov.bikepost.map.gps.TrackerNotification.TAG_ACTION;
 
@@ -67,13 +70,13 @@ public class TrackerService extends Service {
      * This method sets the rate in milliseconds
      * at which app prefers to receive location updates.
      */
-    private static final int INTERVAL_M_SEC = 500;
+    private static final int INTERVAL_M_SEC = 300;
 
     /**
      * This method sets the fastest rate in milliseconds
      * at which app can handle location updates.
      */
-    private static final int FASTEST_INTERVAL_M_SEC = 700;
+    private static final int FASTEST_INTERVAL_M_SEC = 500;
 
     @Override
     public void onCreate() {
@@ -111,12 +114,22 @@ public class TrackerService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (client != null) {
             client.removeLocationUpdates(locationCallback);
             Log.e(TAG, "Location Update Callback Removed");
         }
         Log.e(TAG, "onDestroy: ");
+        notificationManagerCompat.cancel(101);
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        int id = realm.where(Route.class).findAll().size() + 1;
+        Route route = realm.createObject(Route.class, id);
+        route.setRouteName("Маршрут " + id);
+        route.setLatLngList(new LinkedList<>(TrackerPointsBase.get().getList()));
+        realm.commitTransaction();
+        Log.e(TAG, "onDestroy: SAVE" );
+        super.onDestroy();
     }
 
     @Nullable
@@ -127,19 +140,16 @@ public class TrackerService extends Service {
 
     /** location update action. */
     private void locationUpdateAction (final Location location) {
-        Log.e(TAG, "location size " + TrackerPointsBase.get().getList().size());
-        Log.e(TAG, "location Latitude " + location.getLatitude());
-        //Log.e(TAG, "location Longitude " + location.getLongitude());
-        Log.e(TAG, "Speed :: " + location.getSpeed() * 3.6);
 
         final double speed = location.getSpeed() * 3.6;
-        if (speed >= 0.6) {
-            TrackerPointsBase.get().addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
-            TrackerPointsBase.get().update();
-        }
-        double distance = SphericalUtil.computeLength(TrackerPointsBase.get().getList());
-        notification.setContentText("Speed : " + speed + "\nДлинна маршрута : " + distance);
+        final double distance = SphericalUtil.computeLength(TrackerPointsBase.get().getList());
 
+        if (speed >= 1) {
+            TrackerPointsBase.get().addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
+        }
+        TrackerPointsBase.get().update(speed, distance);
+        String content = String.format(Locale.ENGLISH, "Скорость:  %.2f км/ч.\nДлинна маршрута: %.2f м.", speed, distance);
+        notification.setContentText(content);
         notificationManagerCompat.notify(101, notification.build());
 
     }

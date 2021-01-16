@@ -14,7 +14,7 @@ import java.util.List;
 public class TrackerPointsBase {
 
     public interface OnUpdateListener {
-        void onUpdate();
+        void onUpdate(final double speed, final double distance);
     }
 
     private TrackerPointsBase() {
@@ -47,9 +47,9 @@ public class TrackerPointsBase {
         return polylineOptions;
     }
 
-    public void update() {
+    public void update(final double speed, final double distance) {
         if (onUpdateListener == null) return;
-        onUpdateListener.onUpdate();
+        onUpdateListener.onUpdate(speed, distance);
     }
 
 }

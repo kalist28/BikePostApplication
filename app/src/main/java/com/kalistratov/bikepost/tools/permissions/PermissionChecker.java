@@ -1,4 +1,4 @@
-package com.kalistratov.bikepost.tools;
+package com.kalistratov.bikepost.tools.permissions;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

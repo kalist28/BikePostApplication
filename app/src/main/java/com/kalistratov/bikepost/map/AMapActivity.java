@@ -2,18 +2,26 @@ package com.kalistratov.bikepost.map;
 
 import android.Manifest;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.kalistratov.bikepost.R;
-import com.kalistratov.bikepost.tools.PermissionChecker;
+import com.kalistratov.bikepost.tools.permissions.PermissionChecker;
 
 /**
  * Abstract class AMapActivity.
@@ -23,7 +31,14 @@ import com.kalistratov.bikepost.tools.PermissionChecker;
  */
 public abstract class AMapActivity
         extends FragmentActivity
-        implements OnMapReadyCallback {
+        implements OnMapReadyCallback,
+        GoogleMap.OnMyLocationClickListener,
+        GoogleMap.OnMyLocationButtonClickListener {
+
+    /**
+     * Logging tag.
+     */
+    private final String TAG = getClass().getSimpleName();
 
     /** The main class of the card. */
     protected GoogleMap map;
@@ -47,7 +62,11 @@ public abstract class AMapActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkMyLocationPermission();
+
         setContentView(viewLayout());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
@@ -61,8 +80,42 @@ public abstract class AMapActivity
         this.map        = googleMap;
         this.mapIsReady = true;
 
+        checkMyLocationPermission();
+
         setDefaultUiSetting();
         setMyLocationEnabled(true);
+        map.setOnMyLocationClickListener(this);
+        map.setOnMyLocationButtonClickListener(this);
+
+        moveCameraToLocation();
+    }
+
+    /**
+     * Starts the location request service.
+     * When receiving the location, the phone sets the camera on it.
+     */
+    @SuppressLint("MissingPermission")
+    protected void moveCameraToLocation() {
+        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                            map.moveCamera(CameraUpdateFactory.zoomTo(18));
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull final Location location) {
+        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
     }
 
     /**

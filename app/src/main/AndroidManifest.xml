@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.kalistratov.bikepost">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.kalistratov.bikepost">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.BikePost"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="n">
-        <activity android:name=".BikePostActivity" />
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.BikePost"
+            android:usesCleartextTraffic="true"
+            tools:targetApi="n">
+        <activity android:name=".views.BikePostActivity" />
 
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-
-        <activity android:name=".map.gps.TrackerActivity"/>
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key" />
 
         <service android:name=".map.gps.TrackerService" />
 
-        <activity android:name=".map.TestRequestMapActivity"
-            android:label="@string/app_name"/>
+        <activity
+                android:name=".views.MapsActivity"
+                android:label="@string/title_activity_maps" />
+        <activity android:name=".map.gps.TrackerActivity" />
+        <activity android:name=".route.RoutesActivity" />
+        <activity android:name=".views.PermissionCheckerActivity" />
+        <activity
+                android:name=".map.TestRequestMapActivity"
+                android:label="@string/app_name" />
         <activity
                 android:name=".map.PostsActivity"
                 android:label="@string/title_activity_posts" />
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.BikePost.NoActionBar">
+                android:name=".views.MainActivity"
+                android:label="@string/app_name"
+                android:theme="@style/Theme.BikePost.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
